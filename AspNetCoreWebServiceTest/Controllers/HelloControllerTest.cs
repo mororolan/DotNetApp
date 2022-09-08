@@ -1,28 +1,46 @@
-using AspNetCoreWebApplication.Controllers;
 using Xunit;
-using Microsoft.AspNetCore.Mvc;
+using AspNetCoreWebService.Controllers;
 
-namespace AspNetCoreWebApplicationTest.Controllers
+namespace AspNetCoreWebServiceTest.Controllers
 {
-    public class HomeControllerTest
+    public class HelloControllerTest
     {
         [Fact]
-        public void IndexTest()
+        public void NoInputParamGetResponseTest()
         {
-            HomeController controller = new HomeController();
-            ViewResult result = (ViewResult) controller.Index();
-            Assert.Single(result.ViewData);
-            Assert.Equal("You just created a ASP.Net Core web application!", result.ViewData["Message"]);
+            HelloController controller = new HelloController();
+            var response = controller.Get().Value as Response;
+            Assert.Equal("Hello World!!", response.output);
+        }
+
+        [Theory]
+        [InlineData(null, "Hello !")]
+        [InlineData("", "Hello !")]
+        [InlineData("AWS CodeStar", "Hello AWS CodeStar!")]
+        public void InputParamGetResponseTest(string inputValue, string expectedOutput)
+        {
+            HelloController controller = new HelloController();
+            var response = controller.Get(inputValue).Value as Response;
+            Assert.Equal(expectedOutput, response.output);
         }
 
         [Fact]
-        public void ErrorTest()
+        public void NoInputParamPostResponseTest()
         {
-            HomeController controller = new HomeController();
-            ViewResult result = (ViewResult)controller.Error();
-            Assert.Single(result.ViewData);
-            Assert.Equal("We've encountered an error :(", result.ViewData["Message"]);
+            HelloController controller = new HelloController();
+            var response = controller.Post().Value as Response;
+            Assert.Equal("Hello World!", response.output);
         }
-		
+
+        [Theory]
+        [InlineData(null, "Hello !")]
+        [InlineData("", "Hello !")]
+        [InlineData("AWS CodeStar", "Hello AWS CodeStar!")]
+        public void InputParamPostResponseTest(string inputValue, string expectedOutput)
+        {
+            HelloController controller = new HelloController();
+            var response = controller.Post(inputValue).Value as Response;
+            Assert.Equal(expectedOutput, response.output);
+        }
     }
 }
